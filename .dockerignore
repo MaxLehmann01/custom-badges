@@ -1,2 +1,9 @@
 node_modules
 logs
+docker
+db
+.github
+.gitignore
+.prettierrc
+.prettierignore
+.dockerignore
