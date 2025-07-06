@@ -59,9 +59,13 @@ export default class BadgeController extends AbstractController {
                 }
 
                 const healthcheckBadge = new HealthcheckBadge('success');
+                res.setHeader('Content-Type', 'image/svg+xml');
+                res.setHeader('Cache-Control', 'max-age=30, private');
                 res.status(200).send(healthcheckBadge.getSvg());
             } catch (_) {
                 const healthcheckBadge = new HealthcheckBadge('error');
+                res.setHeader('Content-Type', 'image/svg+xml');
+                res.setHeader('Cache-Control', 'max-age=30, private');
                 res.status(200).send(healthcheckBadge.getSvg());
             }
         } catch (err) {
@@ -77,6 +81,8 @@ export default class BadgeController extends AbstractController {
             const badge = new CodeCoverageBadge(coverage);
             const svg = badge.getSvg();
 
+            res.setHeader('Content-Type', 'image/svg+xml');
+            res.setHeader('Cache-Control', 'max-age=30, private');
             res.status(200).send(svg);
         } catch (err) {
             next(err);
