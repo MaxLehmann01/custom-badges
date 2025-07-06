@@ -1,0 +1,12 @@
+services:
+    app:
+      ports:
+        - "YOUR_PORT:80"
+
+    db:
+      environment:
+        POSTGRES_USER: YOUR_DB_USER
+        POSTGRES_PASSWORD: YOUR_DB_PASSWORD
+        POSTGRES_DB: YOUR_DB_DATABASE
+      ports:
+        - "YOUR_PORT:5432"

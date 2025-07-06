@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
+    "scripts": {
+        "dev": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml up --build"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/MaxLehmann01/custom-badges.git"
