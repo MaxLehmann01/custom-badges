@@ -5,6 +5,7 @@ import Server from 'src/components/server/Server';
 import IndexController from 'src/controllers/IndexController';
 import BadgeController from 'src/controllers/BadgeController';
 import ProjectRepository from 'src/repositories/ProjectRepository';
+import ProjectController from 'src/controllers/ProjectController';
 import BadgeRepository from 'src/repositories/BadgeRepository';
 import Database from 'src/components/Database';
 
@@ -23,6 +24,7 @@ const projectRepository = new ProjectRepository(database);
 const badgeRepository = new BadgeRepository();
 
 server.useRouter('/', new IndexController(logger).getRouter());
+server.useRouter('/project', new ProjectController(logger, projectRepository).getRouter());
 server.useRouter('/badge', new BadgeController(logger, projectRepository, badgeRepository).getRouter());
 
 server

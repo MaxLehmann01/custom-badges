@@ -9,8 +9,8 @@ export default class ProjectRepository {
         this.db = db;
     }
 
-    public async findByNameAndToken(name: TProject['name'], token: TProject['token']): Promise<Project | null> {
-        const result = await this.db.selectOne<TProject>('projects', '*', 'name = $1 && token = $2', [name, token]);
+    public async findByName(name: TProject['name']): Promise<Project | null> {
+        const result = await this.db.selectOne<TProject>('projects', '*', 'name = $1', [name]);
 
         if (!result) {
             return null;
@@ -25,5 +25,20 @@ export default class ProjectRepository {
             result.code_coverage,
             result.token
         );
+    }
+
+    public async update(project: TProject): Promise<boolean> {
+        const result = await this.db.update(
+            'projects',
+            {
+                name: project.name,
+                version: project.version,
+                code_coverage: project.code_coverage,
+            },
+            'id = $1',
+            [project.id]
+        );
+
+        return result !== null && result > 0;
     }
 }
