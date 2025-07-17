@@ -20,6 +20,8 @@ export default class ProjectController extends AbstractController {
             xmlparser(),
             this.updateCodeCoverage.bind(this)
         );
+
+        this.router.post('/:project/version', this.authMiddleware.bind(this), this.updateVersion.bind(this));
     }
 
     private async authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -85,6 +87,36 @@ export default class ProjectController extends AbstractController {
 
             res.status(200).json({
                 message: 'Code coverage updated successfully',
+                data: null,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    private async updateVersion(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const version = req.body.version;
+            if (version === undefined || typeof version !== 'string') {
+                throw new RouteError(400, 'version is required and must be of type string');
+            }
+
+            const isUpdated = await this.projectRepository.update({
+                id: req.project.getId(),
+                created_at: req.project.getCreatedAt(),
+                updated_at: new Date(),
+                name: req.project.getName(),
+                version: version,
+                code_coverage: req.project.getCodeCoverage(),
+                token: req.project.getToken(),
+            });
+
+            if (!isUpdated) {
+                throw new RouteError(500, 'Failed to update project version');
+            }
+
+            res.status(200).json({
+                message: 'Version updated successfully',
                 data: null,
             });
         } catch (err) {

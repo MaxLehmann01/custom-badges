@@ -1,13 +1,12 @@
-import Config from 'src/config/Config';
-import ConfigSchema from 'src/config/Schema';
+import Database from 'src/components/Database';
 import Logger from 'src/components/Logger';
 import Server from 'src/components/server/Server';
-import IndexController from 'src/controllers/IndexController';
+import Config from 'src/config/Config';
+import ConfigSchema from 'src/config/Schema';
 import BadgeController from 'src/controllers/BadgeController';
-import ProjectRepository from 'src/repositories/ProjectRepository';
+import IndexController from 'src/controllers/IndexController';
 import ProjectController from 'src/controllers/ProjectController';
-import BadgeRepository from 'src/repositories/BadgeRepository';
-import Database from 'src/components/Database';
+import ProjectRepository from 'src/repositories/ProjectRepository';
 
 Config.load(ConfigSchema);
 
@@ -21,11 +20,10 @@ Database.setConfig(Config.getDatabaseConfig());
 const database = Database.getInstance(logger);
 
 const projectRepository = new ProjectRepository(database);
-const badgeRepository = new BadgeRepository();
 
 server.useRouter('/', new IndexController(logger).getRouter());
 server.useRouter('/project', new ProjectController(logger, projectRepository).getRouter());
-server.useRouter('/badge', new BadgeController(logger, projectRepository, badgeRepository).getRouter());
+server.useRouter('/badge', new BadgeController(logger, projectRepository).getRouter());
 
 server
     .start()

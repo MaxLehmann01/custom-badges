@@ -1,27 +1,26 @@
-import Logger from 'src/components/Logger';
-import AbstractController from 'src/controllers/AbstractController';
-import { NextFunction, Request, Response } from 'express';
-import RouteError from 'src/components/server/RouteError';
 import axios from 'axios';
-import ProjectRepository from 'src/repositories/ProjectRepository';
-import BadgeRepository from 'src/repositories/BadgeRepository';
-import HealthcheckBadge from 'src/entities/badge/HealthcheckBadge';
-import Project from 'src/entities/Project';
+import { NextFunction, Request, Response } from 'express';
+import Logger from 'src/components/Logger';
+import RouteError from 'src/components/server/RouteError';
+import AbstractController from 'src/controllers/AbstractController';
 import CodeCoverageBadge from 'src/entities/badge/CodeCoverageBadge';
+import HealthcheckBadge from 'src/entities/badge/HealthcheckBadge';
+import VersionBadge from 'src/entities/badge/VersionBadge';
+import Project from 'src/entities/Project';
+import ProjectRepository from 'src/repositories/ProjectRepository';
 
 export default class BadgeController extends AbstractController {
     private projectRepository: ProjectRepository;
-    private badgeRepository: BadgeRepository;
 
-    constructor(logger: Logger, projectRepository: ProjectRepository, badgeRepository: BadgeRepository) {
+    constructor(logger: Logger, projectRepository: ProjectRepository) {
         super(logger);
         this.projectRepository = projectRepository;
-        this.badgeRepository = badgeRepository;
     }
 
     protected useRoutes(): void {
         this.router.get('/healthcheck', this.healthcheck.bind(this));
         this.router.get('/:project/code-coverage', this.projectMiddleware.bind(this), this.codeCoverage.bind(this));
+        this.router.get('/:project/version', this.projectMiddleware.bind(this), this.version.bind(this));
     }
 
     private async projectMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -79,6 +78,22 @@ export default class BadgeController extends AbstractController {
             const coverage = project.getCodeCoverage();
 
             const badge = new CodeCoverageBadge(coverage);
+            const svg = badge.getSvg();
+
+            res.setHeader('Content-Type', 'image/svg+xml');
+            res.setHeader('Cache-Control', 'max-age=30, private');
+            res.status(200).send(svg);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    private async version(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const project = req.project as Project;
+            const version = project.getVersion();
+
+            const badge = new VersionBadge(version);
             const svg = badge.getSvg();
 
             res.setHeader('Content-Type', 'image/svg+xml');
