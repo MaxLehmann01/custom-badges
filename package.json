@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/MaxLehmann01/custom-badges/issues"
   },
-  "homepage": "https://github.com/MaxLehmann01/custom-badges#readme"
+  "homepage": "https://github.com/MaxLehmann01/custom-badges#readme",
+  "devDependencies": {
+    "prettier": "^3.7.4"
+  }
 }
