@@ -3,3 +3,4 @@
 .docker/*override*
 !.docker/compose.dev.override.example.yml
 node_modules
+logs
