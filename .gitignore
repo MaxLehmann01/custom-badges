@@ -4,3 +4,4 @@
 !.docker/compose.dev.override.example.yml
 node_modules
 logs
+public/styles.css

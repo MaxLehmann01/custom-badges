@@ -2,7 +2,7 @@
     "name": "custom-badges",
     "version": "1.0.0",
     "scripts": {
-        "dev:start": "docker-compose -f ./.docker/compose.dev.yml -f ./.docker/compose.dev.override.yml up --build",
+        "dev:start": "concurrently \"docker-compose -f ./.docker/compose.dev.yml -f ./.docker/compose.dev.override.yml up --build\" \"tailwindcss -i ./src/tailwind.css -o ./public/styles.css --watch\"",
         "dev:stop": "docker-compose -f ./.docker/compose.dev.yml -f ./.docker/compose.dev.override.yml down",
         "dev:stop-v": "docker-compose -f ./.docker/compose.dev.yml -f ./.docker/compose.dev.override.yml down -v"
     },
@@ -19,11 +19,14 @@
     },
     "homepage": "https://github.com/MaxLehmann01/custom-badges#readme",
     "devDependencies": {
+        "@tailwindcss/cli": "^4.1.18",
         "@types/cors": "^2.8.19",
         "@types/ejs": "^3.1.5",
         "@types/express": "^5.0.6",
         "@types/pg": "^8.16.0",
+        "concurrently": "^9.2.1",
         "prettier": "^3.7.4",
+        "tailwindcss": "^4.1.18",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.16",
         "tsconfig-paths": "^4.2.0",
