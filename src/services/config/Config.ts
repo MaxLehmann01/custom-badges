@@ -1,4 +1,4 @@
-import { TConfigSchema, TLoggerConfig } from 'src/services/config/Types';
+import { TConfigSchema, TDatabaseConfig, TLoggerConfig } from 'src/services/config/Types';
 
 export default class Config {
     private static values: Record<string, string | number | boolean | undefined> = {};
@@ -64,6 +64,19 @@ export default class Config {
         return {
             level: Config.get<string>('LOG_LEVEL'),
             directory: '/app/logs',
+        };
+    }
+
+    public static getDatabaseConfig(): TDatabaseConfig {
+        return {
+            host: Config.get<string>('DB_HOST'),
+            port: Config.get<number>('DB_PORT'),
+            database: Config.get<string>('DB_NAME'),
+            schema: 'public',
+            user: Config.get<string>('DB_USER'),
+            password: Config.get<string>('DB_PASSWORD'),
+            ssl: Config.get<boolean>('DB_SSL'),
+            migrationsDirectory: '/app/migrations',
         };
     }
 }

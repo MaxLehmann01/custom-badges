@@ -9,3 +9,19 @@ services:
     volumes:
       - ../src:/app/src
       - ../logs:/app/logs
+      - ../migrations:/app/migrations
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_SSL: false
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Berlin
+    volumes:
+      - db-data:/var/lib/postgresql
+
+volumes:
+  db-data:

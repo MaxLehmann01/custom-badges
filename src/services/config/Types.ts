@@ -24,4 +24,15 @@ type TLoggerConfig = {
     directory: string;
 };
 
-export type { TConfigSchema, TLoggerConfig };
+type TDatabaseConfig = {
+    host: string;
+    port: number;
+    database: string;
+    schema: string;
+    user: string;
+    password: string;
+    ssl: boolean;
+    migrationsDirectory: string;
+};
+
+export type { TConfigSchema, TLoggerConfig, TDatabaseConfig };
