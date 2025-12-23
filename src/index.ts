@@ -2,6 +2,7 @@ import Config from 'src/services/config/Config';
 import configSchema from 'src/services/config/Schema';
 import Logger from 'src/services/logger/Logger';
 import Database from 'src/services/database/Database';
+import HttpServer from 'src/services/http-server/HttpServer';
 
 Config.load(configSchema);
 
@@ -10,10 +11,8 @@ const logger = new Logger(Config.getLoggerConfig());
 Database.setConfig(Config.getDatabaseConfig());
 const database = Database.getInstance(logger);
 
-logger.info('Application started', {
-    NODE_ENV: Config.get<string>('NODE_ENV'),
-    TZ: Config.get<string>('TZ'),
-});
+HttpServer.setConfig(Config.getHttpServerConfig());
+const httpServer = HttpServer.getInstance(logger);
 
 database
     .start()
@@ -24,6 +23,19 @@ database
     })
     .catch((err) => {
         logger.error('Failed to connect to database', {
+            err: err.message,
+        });
+
+        process.exit(1);
+    });
+
+httpServer
+    .start()
+    .then(() => {
+        logger.info('Successfully started HTTP server');
+    })
+    .catch((err) => {
+        logger.error('Failed to start HTTP server', {
             err: err.message,
         });
 

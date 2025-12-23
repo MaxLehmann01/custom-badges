@@ -37,4 +37,8 @@ export default {
         type: 'boolean',
         required: false,
     },
+    CORS_WHITELIST: {
+        type: 'string',
+        required: true,
+    },
 } as TConfigSchema;

@@ -1,3 +1,5 @@
+import { CorsOptions } from 'cors';
+
 type TConfigField =
     | {
           type: 'string';
@@ -35,4 +37,9 @@ type TDatabaseConfig = {
     migrationsDirectory: string;
 };
 
-export type { TConfigSchema, TLoggerConfig, TDatabaseConfig };
+type THttpServerConfig = {
+    port: number;
+    corsOptions: CorsOptions;
+};
+
+export type { TConfigSchema, TLoggerConfig, TDatabaseConfig, THttpServerConfig };

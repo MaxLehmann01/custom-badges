@@ -1,4 +1,5 @@
-import { TConfigSchema, TDatabaseConfig, TLoggerConfig } from 'src/services/config/Types';
+import { TConfigSchema, TDatabaseConfig, THttpServerConfig, TLoggerConfig } from 'src/services/config/Types';
+import { CorsOptions } from 'cors';
 
 export default class Config {
     private static values: Record<string, string | number | boolean | undefined> = {};
@@ -77,6 +78,28 @@ export default class Config {
             password: Config.get<string>('DB_PASSWORD'),
             ssl: Config.get<boolean>('DB_SSL'),
             migrationsDirectory: '/app/migrations',
+        };
+    }
+
+    public static getHttpServerConfig(): THttpServerConfig {
+        return {
+            port: 80,
+            corsOptions: Config.getCorsOptions(),
+        };
+    }
+
+    private static getCorsOptions(): CorsOptions {
+        const whitelist = Config.get<string>('CORS_WHITELIST').split(',');
+
+        return {
+            credentials: true,
+            origin: (origin, callback) => {
+                if (!origin || whitelist.indexOf(origin) !== -1) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'), false);
+                }
+            },
         };
     }
 }
