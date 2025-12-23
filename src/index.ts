@@ -3,6 +3,7 @@ import configSchema from 'src/services/config/Schema';
 import Logger from 'src/services/logger/Logger';
 import Database from 'src/services/database/Database';
 import HttpServer from 'src/services/http-server/HttpServer';
+import IndexHttpController from 'src/http-controllers/IndexController';
 
 Config.load(configSchema);
 
@@ -29,6 +30,7 @@ database
         process.exit(1);
     });
 
+httpServer.registerController(new IndexHttpController(logger));
 httpServer
     .start()
     .then(() => {
