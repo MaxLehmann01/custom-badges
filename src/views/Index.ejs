@@ -9,8 +9,10 @@
     <body class="p-4 bg-slate-900 text-white">
         <div>
             <h1>Welcome to the API</h1>
-            <p>NODE_ENV: <%= NODE_ENV; %></p>
-            <p>TZ: <%= TZ; %></p>
+            <div class="flex flex-col gap-1">
+                <%- NODE_ENV; %>
+                <%- TZ; %>
+            </div>
         </div>
     </body>
 </html>

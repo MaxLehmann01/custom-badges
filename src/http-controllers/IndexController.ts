@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import AbstractHttpController from 'src/services/http-server/AbstractController';
 import Logger from 'src/services/logger/Logger';
 import Config from 'src/services/config/Config';
+import CustomBadge from 'src/entities/CustomBadge';
 
 export default class IndexHttpController extends AbstractHttpController {
     protected readonly prefix = '/';
@@ -18,9 +19,12 @@ export default class IndexHttpController extends AbstractHttpController {
 
     private async indexRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            const nodeEnvBadge = new CustomBadge('NODE_ENV', '#0000ff', Config.get<string>('NODE_ENV'));
+            const tzBadge = new CustomBadge('TZ', '#ff9900', Config.get<string>('TZ'));
+
             res.status(200).render('Index', {
-                NODE_ENV: Config.get<string>('NODE_ENV'),
-                TZ: Config.get<string>('TZ'),
+                NODE_ENV: nodeEnvBadge.getSvg(),
+                TZ: tzBadge.getSvg(),
             });
         } catch (e) {
             next(e);
