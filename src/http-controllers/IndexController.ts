@@ -18,8 +18,7 @@ export default class IndexHttpController extends AbstractHttpController {
 
     private async indexRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            res.status(200).json({
-                message: 'Welcome to the API',
+            res.status(200).render('Index', {
                 NODE_ENV: Config.get<string>('NODE_ENV'),
                 TZ: Config.get<string>('TZ'),
             });

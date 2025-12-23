@@ -24,6 +24,10 @@ export default class HttpServer {
         this.app.use(express.json());
         this.app.use(cors(HttpServer.config.corsOptions));
 
+        this.app.set('view engine', 'ejs');
+        this.app.use(express.static(HttpServer.config.publicDirectory));
+        this.app.set('views', HttpServer.config.viewsDirectory);
+
         this.app.use(this.router);
 
         this.useErrorHandlers();

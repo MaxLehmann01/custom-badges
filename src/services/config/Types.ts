@@ -40,6 +40,8 @@ type TDatabaseConfig = {
 type THttpServerConfig = {
     port: number;
     corsOptions: CorsOptions;
+    viewsDirectory: string;
+    publicDirectory: string;
 };
 
 export type { TConfigSchema, TLoggerConfig, TDatabaseConfig, THttpServerConfig };

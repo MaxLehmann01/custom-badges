@@ -1,5 +1,6 @@
 import { TConfigSchema, TDatabaseConfig, THttpServerConfig, TLoggerConfig } from 'src/services/config/Types';
 import { CorsOptions } from 'cors';
+import path from 'path';
 
 export default class Config {
     private static values: Record<string, string | number | boolean | undefined> = {};
@@ -85,6 +86,8 @@ export default class Config {
         return {
             port: 80,
             corsOptions: Config.getCorsOptions(),
+            viewsDirectory: path.join(__dirname, '../../views'),
+            publicDirectory: path.join(process.cwd(), 'public'),
         };
     }
 
