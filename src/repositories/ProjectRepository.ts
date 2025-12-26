@@ -1,4 +1,5 @@
 import Project, { TDBProject, TProject } from 'src/entities/Project';
+import ProjectBadge, { TDBProjectBadge, TProjectBadge } from 'src/entities/ProjectBadge';
 import AbstractRepository from 'src/repositories/AbstractRepository';
 import Security from 'src/Security';
 import crypto from 'crypto';
@@ -81,5 +82,32 @@ export default class ProjectRepository extends AbstractRepository {
         }
 
         return deleteResult > 0;
+    }
+
+    public async findProjectBadgeByTypeAndProjectId(
+        projectId: TProjectBadge['projectId'],
+        type: TProjectBadge['type']
+    ): Promise<ProjectBadge | null> {
+        const projectBadge = await this.database.selectOne<TDBProjectBadge>(
+            'project_badges',
+            '*',
+            'project_id = $1 AND type = $2',
+            undefined,
+            [projectId, type]
+        );
+
+        if (!projectBadge) {
+            return null;
+        }
+
+        return new ProjectBadge({
+            id: projectBadge.id,
+            createdAt: projectBadge.created_at,
+            updatedAt: projectBadge.updated_at,
+            projectId: projectBadge.project_id,
+            type: projectBadge.type,
+            value: projectBadge.value,
+            isPublic: projectBadge.is_public,
+        });
     }
 }

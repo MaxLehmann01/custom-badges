@@ -2,13 +2,37 @@
     <div class="flex justify-between items-center">
         <div>
             <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Project</p>
-            <h1 class="text-3xl font-semibold text-slate-900"><%= project.name %></h1>
+            <h1 class="text-3xl font-semibold text-slate-900"><%= project.name; %></h1>
         </div>
         <button
                 class="rounded-2xl border border-red-200 bg-red-50 px-4 py-2 font-semibold text-red-600 hover:cursor-pointer hover:bg-red-100 text-sm"
-                onclick="deleteProject('<%= project.id %>')"
-        >Delete</button>
+                onclick="deleteProject('<%= project.id; %>')"
+        >Delete
+        </button>
     </div>
+
+</section>
+
+<section class="bg-white rounded-3xl border border-slate-200 shadow-xl p-4">
+    <table>
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Badge</th>
+            <th>Public</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Coverage</td>
+            <td>
+                <%- coverageBadge %>
+            </td>
+            <td>?</td>
+        </tr>
+        </tbody>
+    </table>
+
 </section>
 
 <script>

@@ -5,8 +5,8 @@ import AbstractHttpController from 'src/services/http-server/AbstractController'
 import RouteError from 'src/services/http-server/RouteError';
 import Logger from 'src/services/logger/Logger';
 import Config from 'src/services/config/Config';
-import CustomBadge from 'src/entities/CustomBadge';
 import { validate as uuidValidate } from 'uuid';
+import CoverageBadge from 'src/entities/badges/CoverageBadge';
 
 export default class IndexHttpController extends AbstractHttpController {
     protected readonly prefix = '/';
@@ -55,6 +55,11 @@ export default class IndexHttpController extends AbstractHttpController {
             }
 
             const projects = await this.getProjectsForNavigation();
+            const projectCoverage = await this.projectRepository.findProjectBadgeByTypeAndProjectId(
+                projectId,
+                'coverage'
+            );
+            const coverageBadge = projectCoverage ? new CoverageBadge(Number(projectCoverage.getValue())) : null;
 
             res.status(200).render('Index', {
                 view: 'pages/Project',
@@ -66,6 +71,7 @@ export default class IndexHttpController extends AbstractHttpController {
                     name: project.getName(),
                     key: project.getKey(),
                 },
+                coverageBadge: coverageBadge ? coverageBadge.getSvg() : null,
             });
         } catch (e) {
             next(e);
