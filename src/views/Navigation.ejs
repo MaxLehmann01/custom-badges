@@ -6,7 +6,14 @@
             </a>
         </div>
         <div class="flex-1 overflow-y-auto p-4">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-2">Projects</h2>
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Projects</h2>
+                <button type="button"
+                        class="inline-flex items-center justify-center h-6 w-6 rounded-full border border-slate-300 text-slate-500 text-sm font-semibold hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 hover:cursor-pointer"
+                        onclick="document.getElementById('new-project-dialog').showModal()">
+                    +
+                </button>
+            </div>
             <% if(projects && projects.length > 0) { %>
                 <ul class="space-y-1.5">
                     <% projects.forEach((project) => { %>
@@ -24,4 +31,73 @@
             <% }%>
         </div>
     </nav>
+
+    <dialog id="new-project-dialog" class="rounded-2xl p-0 border border-slate-200 shadow-xl max-w-sm w-full mx-auto">
+        <div class="p-4 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-slate-800">Create new project</h3>
+                <button type="button" class="text-slate-400 hover:text-slate-600" onclick="document.getElementById('new-project-dialog').close()">✕</button>
+            </div>
+            <div class="space-y-1">
+                <label for="project-name" class="block text-xs font-medium text-slate-600">Name</label>
+                <input id="project-name" type="text" required
+                       class="block w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-slate-500 focus:ring-slate-500" />
+            </div>
+            <div id="new-project-error" class="text-xs text-red-500 hidden"></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" class="px-3 py-1.5 text-xs rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50" onclick="document.getElementById('new-project-dialog').close()">Cancel</button>
+                <button type="button" class="px-3 py-1.5 text-xs rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600" onclick="createProject()">Save</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        async function createProject() {
+            const input = document.getElementById('project-name');
+            const errorEl = document.getElementById('new-project-error');
+            const name = input.value.trim();
+
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+
+            if (!name) {
+                errorEl.textContent = 'Name darf nicht leer sein.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const res = await fetch('/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name }),
+                });
+
+                if (!res.ok) {
+                    const data = await res.json().catch(() => null);
+                    errorEl.textContent = (data && data.message) || 'Fehler beim Erstellen des Projekts.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                window.location.reload();
+            } catch (e) {
+                errorEl.textContent = 'Netzwerkfehler beim Erstellen des Projekts.';
+                errorEl.classList.remove('hidden');
+            }
+        }
+    </script>
 </div>
+
+<style>
+    #new-project-dialog::backdrop {
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    #new-project-dialog {
+        inset: 0;
+        margin: auto;
+    }
+</style>
