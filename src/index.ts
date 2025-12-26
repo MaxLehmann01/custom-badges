@@ -1,3 +1,4 @@
+import ProjectRepository from 'src/repositories/ProjectRepository';
 import Config from 'src/services/config/Config';
 import configSchema from 'src/services/config/Schema';
 import Logger from 'src/services/logger/Logger';
@@ -15,6 +16,8 @@ const database = Database.getInstance(logger);
 HttpServer.setConfig(Config.getHttpServerConfig());
 const httpServer = HttpServer.getInstance(logger);
 
+const projectRepository = new ProjectRepository(database);
+
 database
     .start()
     .then(async () => {
@@ -30,7 +33,7 @@ database
         process.exit(1);
     });
 
-httpServer.registerController(new IndexHttpController(logger));
+httpServer.registerController(new IndexHttpController(logger, projectRepository));
 httpServer
     .start()
     .then(() => {

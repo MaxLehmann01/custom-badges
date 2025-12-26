@@ -41,4 +41,12 @@ export default {
         type: 'string',
         required: true,
     },
+    AES256_GCM_KEY: {
+        type: 'string',
+        required: true,
+    },
+    HASH_SALT: {
+        type: 'string',
+        required: true,
+    },
 } as TConfigSchema;
