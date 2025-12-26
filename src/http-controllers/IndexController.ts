@@ -24,6 +24,8 @@ export default class IndexHttpController extends AbstractHttpController {
     protected useRoutes(): void {
         this.router.get('/', this.basicAuthMiddleware(), this.homeRoute.bind(this));
         this.router.get('/:projectId', this.basicAuthMiddleware(), this.projectRoute.bind(this));
+        this.router.post('/', this.basicAuthMiddleware(), this.createProjectRoute.bind(this));
+        this.router.delete('/:projectId', this.basicAuthMiddleware(), this.deleteProjectRoute.bind(this));
     }
 
     private async homeRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -70,6 +72,60 @@ export default class IndexHttpController extends AbstractHttpController {
         }
     }
 
+    private async createProjectRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { name } = req.body;
+
+            if (!name || typeof name !== 'string') {
+                throw new RouteError(400, 'The field "name" is required and must be a string.');
+                return;
+            }
+
+            const insertedProject = await this.projectRepository.create({
+                name,
+            });
+
+            if (!insertedProject) {
+                throw new RouteError(500, 'Failed to create project.');
+                return;
+            }
+
+            res.status(201).json({
+                message: 'Successfully created project.',
+                data: {
+                    id: insertedProject.getId(),
+                    name: insertedProject.getName(),
+                },
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    private async deleteProjectRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const projectId = req.params.projectId;
+
+            if (!uuidValidate(projectId)) {
+                throw new RouteError(400, 'Invalid project ID.');
+            }
+
+            const project = await this.projectRepository.findById(projectId);
+            if (!project) {
+                throw new RouteError(404, 'Project not found.');
+            }
+
+            if (!(await this.projectRepository.delete(projectId))) {
+                throw new RouteError(500, 'Failed to delete project.');
+            }
+
+            res.status(200).json({
+                message: 'Successfully deleted project.',
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
     private basicAuthMiddleware(): RequestHandler {
         const realm = 'projects';
         const basicAuthConfig = Config.getBasicAuthConfig();

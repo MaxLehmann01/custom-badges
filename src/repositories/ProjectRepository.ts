@@ -44,4 +44,42 @@ export default class ProjectRepository extends AbstractRepository {
             keyDigest: project.key_digest,
         });
     }
+
+    public async create(
+        project: Omit<TProject, 'id' | 'createdAt' | 'updatedAt' | 'key' | 'keyDigest'>
+    ): Promise<Project | null> {
+        const key = crypto.randomBytes(32).toString('hex');
+        const encryptedKey = Security.encryptAesGCM(key);
+        const keyDigest = Security.createDigest(key);
+
+        const insertedId = await this.database.insert<TProject['id']>(
+            'projects',
+            {
+                created_at: new Date(),
+                updated_at: new Date(),
+                name: project.name,
+                key_ct: encryptedKey.ct,
+                key_iv: encryptedKey.iv,
+                key_tag: encryptedKey.tag,
+                key_digest: keyDigest,
+            },
+            'id'
+        );
+
+        if (!insertedId) {
+            return null;
+        }
+
+        return this.findById(insertedId);
+    }
+
+    public async delete(projectId: TProject['id']): Promise<boolean> {
+        const deleteResult = await this.database.delete('projects', 'id = $1', [projectId]);
+
+        if (deleteResult === null) {
+            return false;
+        }
+
+        return deleteResult > 0;
+    }
 }
