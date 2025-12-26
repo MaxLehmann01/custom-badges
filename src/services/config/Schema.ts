@@ -49,4 +49,12 @@ export default {
         type: 'string',
         required: true,
     },
+    BASIC_AUTH_USERNAME: {
+        type: 'string',
+        required: false,
+    },
+    BASIC_AUTH_PASSWORD: {
+        type: 'string',
+        required: false,
+    },
 } as TConfigSchema;

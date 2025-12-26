@@ -1,4 +1,10 @@
-import { TConfigSchema, TDatabaseConfig, THttpServerConfig, TLoggerConfig } from 'src/services/config/Types';
+import {
+    TBasicAuthConfig,
+    TConfigSchema,
+    TDatabaseConfig,
+    THttpServerConfig,
+    TLoggerConfig,
+} from 'src/services/config/Types';
 import { CorsOptions } from 'cors';
 import path from 'path';
 
@@ -88,6 +94,13 @@ export default class Config {
             corsOptions: Config.getCorsOptions(),
             viewsDirectory: path.join(__dirname, '../../views'),
             publicDirectory: path.join(process.cwd(), 'public'),
+        };
+    }
+
+    public static getBasicAuthConfig(): TBasicAuthConfig {
+        return {
+            username: Config.get<string>('BASIC_AUTH_USERNAME'),
+            password: Config.get<string>('BASIC_AUTH_PASSWORD'),
         };
     }
 

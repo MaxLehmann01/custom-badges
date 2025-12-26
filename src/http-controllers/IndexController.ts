@@ -22,8 +22,8 @@ export default class IndexHttpController extends AbstractHttpController {
     }
 
     protected useRoutes(): void {
-        this.router.get('/', this.homeRoute.bind(this));
-        this.router.get('/:projectId', this.projectRoute.bind(this));
+        this.router.get('/', this.basicAuthMiddleware(), this.homeRoute.bind(this));
+        this.router.get('/:projectId', this.basicAuthMiddleware(), this.projectRoute.bind(this));
     }
 
     private async homeRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -68,6 +68,33 @@ export default class IndexHttpController extends AbstractHttpController {
         } catch (e) {
             next(e);
         }
+    }
+
+    private basicAuthMiddleware(): RequestHandler {
+        const realm = 'projects';
+        const basicAuthConfig = Config.getBasicAuthConfig();
+
+        return (req: Request, res: Response, next: NextFunction) => {
+            const auth = req.header('authorization') || '';
+            const [scheme, encoded] = auth.split(' ');
+
+            if (scheme !== 'Basic' || !encoded) {
+                res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
+                return res.status(401).send('Authentication required.');
+            }
+
+            const decoded = Buffer.from(encoded, 'base64').toString('utf8');
+            const sepIndex = decoded.indexOf(':');
+            const user = sepIndex >= 0 ? decoded.slice(0, sepIndex) : '';
+            const pass = sepIndex >= 0 ? decoded.slice(sepIndex + 1) : '';
+
+            if (user !== basicAuthConfig.username || pass !== basicAuthConfig.password) {
+                res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
+                return res.status(401).send('Invalid credentials.');
+            }
+
+            next();
+        };
     }
 
     private async getProjectsForNavigation(): Promise<

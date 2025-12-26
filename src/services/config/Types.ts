@@ -44,4 +44,9 @@ type THttpServerConfig = {
     publicDirectory: string;
 };
 
-export type { TConfigSchema, TLoggerConfig, TDatabaseConfig, THttpServerConfig };
+type TBasicAuthConfig = {
+    username: string;
+    password: string;
+};
+
+export type { TConfigSchema, TLoggerConfig, TDatabaseConfig, THttpServerConfig, TBasicAuthConfig };
